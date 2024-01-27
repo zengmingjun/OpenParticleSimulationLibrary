@@ -1,7 +1,7 @@
 #include"comp.h"
 #include< exception >
 #include<stdexcept>
-//#include"tmpcomp.h"
+#include"tmpcomp.h"
 //#include<graphics.h>
 using namespace std;
 
@@ -11,6 +11,11 @@ namespace sp {
 	unsigned Dimension;
 	unsigned PointVision;
 	unsigned PointVisionPowTwo;
+	unsigned TheRem;
+	Sil* AllSil;
+	
+
+
 	vector<unsigned> PartNum;
 	vector<long long> Vensize;
 	vector<unsigned>PartIndexUint;
@@ -21,7 +26,7 @@ namespace sp {
 	FUPFUC fUpFuc;
 	COORUPFUC coorUpFuc;
 
-
+	void EdgeFiltration();
 
 	Point::Point()
 	{
@@ -46,6 +51,21 @@ namespace sp {
 	Part::~Part()
 	{
 		
+	}
+
+
+	SilZCor::SilZCor()
+	{
+		Cor[0] = 0;
+		Cor[1] = 0;
+		Cor[2] = 0;
+	}
+
+	SilYCor::SilYCor() {
+
+		Cor[0] = 0;
+		Cor[1] = 0;
+
 	}
 
 	SilX::SilX() {
@@ -74,11 +94,23 @@ namespace sp {
 		}
 	}
 
+	RangePass::RangePass()
+	{
+		FixedCor = nullptr;
+		
+	}
+
+	RangePass::~RangePass()
+	{
+		delete FixedCor;
+	}
+
+
 	void CreateSpace(vector<unsigned> partCount, vector<long long> VenSize,unsigned pointvision) {
 		PointVision = pointvision;
 		PointVisionPowTwo = pointvision * pointvision;
 		Dimension = partCount.size();
-
+		
 
 		for (unsigned PartNumu : partCount)
 		{
@@ -106,7 +138,6 @@ namespace sp {
 				{
 					throw runtime_error("VenSize can't '<100'");
 				}
-
 			}
 			catch (const exception& e) {
 				// 处理异常  
@@ -166,8 +197,11 @@ namespace sp {
 			PartIndexUint.push_back(partCount[0]);
 #endif // !SPACE_3D
 
+		TheRem = pointvision % (unsigned)PartUnit[0];
 		PartNum = move(partCount);
 		Vensize = move(VenSize);
+
+		EdgeFiltration();
 
 		unsigned tmp = 1;
 		for (auto partCountu : PartNum)
@@ -281,6 +315,23 @@ namespace sp {
 		return sil;
 	}
 
+
+	void EdgeFiltration() {
+		LONGDOU coor;
+		for (unsigned i = 0; i < Dimension; i++)
+		{
+			coor.Arr[i] = 0;
+		}
+		unsigned* pcot = new unsigned[Dimension](0);
+		for (unsigned i = 0; i < Dimension; i++)
+		{
+			pcot[i] = 0;
+		}
+
+		Sil* tmpallsil = CilLoad(coor, pcot);
+		delete[] pcot;
+		AllSil = tmpallsil;
+	}
 	
 
 	void OnePartTraverse(Point& self,Part* part) {
@@ -303,6 +354,8 @@ namespace sp {
 		}
 	}
 
+
+	
 
 	void PoitRange(Point& self,Sil* tmpsil) {
 #ifdef SPACE_3D
@@ -440,14 +493,256 @@ namespace sp {
 	}
 	
 
+	void OnePotRange(Point& PotGrpu) {
+#ifdef SPACE_3D
+		int Rale[3];
+		int FRale[2];
+		for (unsigned i = 0; i < 3; i++)
+		{
+			Rale[i] = PotGrpu.Coor.Arr[i] - PotGrpu.partindex.PartCor[i] * PartUnit[i];
+			FRale[i] = Rale[i];
+			Rale[i] = PartUnit[i] - Rale[i];
+	}
+
+		for (unsigned x = 0; x < AllSil->NumX; x++)
+		{
+			unsigned XDCNum;
+			XDCNum = x == 0 ? 1 : 2;
+
+
+
+			for (unsigned y = 0; y < AllSil->GrpX[x].NumY; y++)
+			{
+				unsigned YDCNum;
+				YDCNum = y == 0 ? 1 : 2;
+
+				for (unsigned z = 0; z < AllSil->GrpX[x].GrpY[y].NumZ; z++)
+				{
+
+
+					int Sym[] = { 1,-1 };
+
+					unsigned ZDCNum;
+					ZDCNum = z == 0 ? 1 : 2;
+
+
+					for (unsigned zx = 0; zx < XDCNum; zx++)
+					{
+
+						int XPow = Sym[zx] * x;
+
+						int Tmpx = XPow + PotGrpu.partindex.PartCor[0];
+
+						if (Tmpx<0 || Tmpx>PartNum[0])
+						{
+							continue;
+						}
+
+						if (XPow < 0)
+						{
+							XPow = (XPow + 1) * PartUnit[0] - FRale[0];
+						}
+						else
+						{
+							XPow = XPow == 0 ? 0 : (XPow - 1) * PartUnit[0] + Rale[0];
+						}
+
+						XPow = XPow * XPow;
+
+
+
+						for (unsigned zy = 0; zy < YDCNum; zy++)
+						{
+							int YPow = Sym[zy] * y;
+
+
+							int Tmpy = YPow + PotGrpu.partindex.PartCor[1];
+
+							if (Tmpy<0 || Tmpy>PartNum[1])
+							{
+								continue;
+							}
+
+							if (YPow < 0)
+							{
+
+								YPow = (YPow + 1) * PartUnit[1] - FRale[1];
+
+							}
+							else
+							{
+								YPow = YPow == 0 ? 0 : (YPow - 1) * PartUnit[1] + Rale[1];
+							}
+
+							YPow = YPow * YPow;
+
+
+
+							for (unsigned zz = 0; zz < ZDCNum; zz++)
+							{
+								int ZPow = Sym[zz] * y;
+
+
+								int Tmpz = ZPow + PotGrpu.partindex.PartCor[2];
+
+
+
+								if (Tmpz<0 || Tmpz>PartNum[2])
+								{
+									continue;
+								}
+
+								if (ZPow < 0)
+								{
+
+									ZPow = (ZPow + 1) * PartUnit[2] - FRale[2];
+
+								}
+								else
+								{
+									ZPow = ZPow == 0 ? 0 : (ZPow - 1) * PartUnit[2] + Rale[2];
+								}
+
+								ZPow = ZPow * ZPow;
+
+								int TmpR = YPow + XPow + ZPow;
+
+								if (TmpR <= PointVisionPowTwo)
+								{
+									int tmpindex = Tmpx + Tmpy * PartIndexUint[0] + Tmpz * PartIndexUint[1];
+									OnePartTraverse(PotGrpu, &pPart[tmpindex]);
+								}
+
+							}
+
+						}
+					}
+				}
+			}
+		}
+
+#endif // SPACE_3D
+
+#ifndef SPACE_3D
+
+		int Rale[2];
+		int FRale[2];
+		for (unsigned i = 0; i < 2; i++)
+		{
+			Rale[i] = PotGrpu.Coor.Arr[i] - PotGrpu.partindex.PartCor[i] * PartUnit[i];
+			FRale[i] = Rale[i];
+			Rale[i] = PartUnit[i] - Rale[i];
+		}
+
+		for (unsigned x = 0; x < AllSil->NumX; x++)
+		{
+			unsigned XDCNum;
+			XDCNum = x == 0 ? 1 : 2;
+
+
+			for (unsigned y = 0; y < AllSil->GrpX[x].NumY; y++)
+			{
+				unsigned YDCNum;
+				YDCNum = y == 0 ? 1 : 2;
+
+
+				int Sym[] = { 1,-1 };
+
+
+
+				for (unsigned zx = 0; zx < XDCNum; zx++)
+				{
+					int XPow = Sym[zx] * x;
+
+					int Tmpx = XPow + PotGrpu.partindex.PartCor[0];
+
+					if (Tmpx<0 || Tmpx>PartNum[0])
+					{
+						continue;
+					}
+					if (XPow < 0)
+					{
+						XPow = (XPow + 1) * PartUnit[0] - FRale[0];
+					}
+					else
+					{
+						XPow = XPow == 0 ? 0 : (XPow - 1) * PartUnit[0] + Rale[0];
+					}
+
+
+
+					XPow = XPow * XPow;
+
+
+
+					for (unsigned zy = 0; zy < YDCNum; zy++)
+					{
+						int YPow = Sym[zy] * y;
+
+
+						int Tmpy = YPow + PotGrpu.partindex.PartCor[1];
+						if (Tmpy<0 || Tmpy>PartNum[1])
+						{
+							continue;
+						}
+						if (YPow < 0)
+						{
+
+							YPow = (YPow + 1) * PartUnit[1] - FRale[1];
+
+						}
+						else
+						{
+							YPow = YPow == 0 ? 0 : (YPow - 1) * PartUnit[1] + Rale[1];
+						}
+
+						YPow = YPow * YPow;
+
+
+
+						int TmpR = YPow + XPow;
+
+						if (TmpR < PointVisionPowTwo)
+						{
+							int tmpindex = Tmpx + Tmpy * PartIndexUint[0];
+							//drawragn(Tmpx, Tmpy);
+							OnePartTraverse(PotGrpu, &pPart[tmpindex]);
+
+						}
+
+					}
+				}
+
+			}
+		}
+
+#endif // !SPACE_3D
+	}
+
 	void SpaceDataUpUesPotGrp() {
+
 		for (auto& PotGrpu:PotGrp)
 		{
+#ifdef SIL_ENABLE
+
 			Sil* tmpsil;
-			tmpsil = CilLoad(PotGrpu.Coor , PotGrpu.partindex.PartCor);
-			PoitRange(PotGrpu,tmpsil);
+			tmpsil = CilLoad(PotGrpu.Coor, PotGrpu.partindex.PartCor);
+			PoitRange(PotGrpu, tmpsil);
 			delete tmpsil;
+
+
+#endif // SIL_ENABLE
+#ifndef SIL_ENABLE
+
+			OnePotRange(PotGrpu);
+
+#endif // !1
+
+
+			//OnePotRange(PotGrpu);
+			
 		}
+		
 
 		for (auto& PotGrpu : PotGrp)
 		{
@@ -456,8 +751,9 @@ namespace sp {
 			try {
 				for (unsigned i = 0; i < Dimension; i++)
 				{
-					if (PotGrpu.Coor.Arr[i] < 0 || PotGrpu.Coor.Arr[i]>Vensize[i])
+					if (PotGrpu.Coor.Arr[i] < -STANDERDDEVIATION || PotGrpu.Coor.Arr[i]>Vensize[i]+ STANDERDDEVIATION)
 					{
+
 						throw runtime_error("coor over range(Vensize)");
 					}
 				}
@@ -495,6 +791,11 @@ namespace sp {
 		Vensize.clear();
 		pPart = nullptr;
 		PotGrp.clear();
+		if (AllSil!=nullptr)
+		{
+			delete AllSil;
+		}
+		
 	}
 	
 
@@ -517,6 +818,23 @@ namespace sp {
 
 		for (auto& PotGrpu : PotGrp)
 		{
+
+
+			try {
+				for (unsigned i = 0; i < Dimension; i++)
+				{
+					if (PotGrpu.Coor.Arr[i] < 0 || PotGrpu.Coor.Arr[i]>Vensize[i])
+					{
+						throw runtime_error("coor over range(Vensize)");
+					}
+				}
+				// 抛出一个异常  
+			}
+			catch (const exception& e) {
+				// 处理异常  
+				cerr << "erorr：" << e.what() << endl;
+				exit(-1);
+			}
 			IndexParse(PotGrpu.partindex, PotGrpu.Coor);
 			
 			AddOneInOnePart(PotGrpu);
