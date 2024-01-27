@@ -115,7 +115,7 @@ namespace sp {
 		for (unsigned PartNumu : partCount)
 		{
 			try {
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 				if (PartNumu == 0)
 				{
 					throw runtime_error("partCount can't '==0'");
@@ -123,8 +123,8 @@ namespace sp {
 
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 
@@ -133,22 +133,22 @@ namespace sp {
 		for (auto Vensizeu : VenSize)
 		{
 			try {
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 				if (Vensizeu < 100)
 				{
 					throw runtime_error("VenSize can't '<100'");
 				}
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 		}
 
 #ifdef SPACE_3D
 		try {
-			// Å×³öÒ»¸öÒì³£  
+			// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 			if (partCount.size() != 3 || VenSize.size() != 3)
 			{
 				throw runtime_error("size erorr!");
@@ -156,8 +156,8 @@ namespace sp {
 
 		}
 		catch (const exception& e) {
-			// ´¦ÀíÒì³£  
-			cerr << "erorr£º" << e.what() << endl;
+			// å¤„ç†å¼‚å¸¸  
+			cerr << "erorrï¼š" << e.what() << endl;
 			exit(-1);
 		}
 
@@ -175,7 +175,7 @@ namespace sp {
 
 #ifndef SPACE_3D
 			try {
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 				if (partCount.size() != 2|| VenSize.size()!=2)
 				{
 					throw runtime_error("size erorr!");
@@ -183,8 +183,8 @@ namespace sp {
 
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 
@@ -482,7 +482,7 @@ namespace sp {
 		for (unsigned int i = 0; i < Dimension; i++)
 		{
 			double c = (double)hcoor.Arr[i] - (double)gcoor.Arr[i];
-			pows = pows + powf(c, 2);
+			pows = pows + c*c;
 		}
 		return pows;
 	}
@@ -757,11 +757,11 @@ namespace sp {
 						throw runtime_error("coor over range(Vensize)");
 					}
 				}
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 #endif // ERORR_OVERRANGE
@@ -828,11 +828,11 @@ namespace sp {
 						throw runtime_error("coor over range(Vensize)");
 					}
 				}
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 			IndexParse(PotGrpu.partindex, PotGrpu.Coor);
@@ -855,11 +855,11 @@ namespace sp {
 						throw runtime_error("coor over range(Vensize)");
 					}
 				}
-				// Å×³öÒ»¸öÒì³£  
+				// æŠ›å‡ºä¸€ä¸ªå¼‚å¸¸  
 			}
 			catch (const exception& e) {
-				// ´¦ÀíÒì³£  
-				cerr << "erorr£º" << e.what() << endl;
+				// å¤„ç†å¼‚å¸¸  
+				cerr << "erorrï¼š" << e.what() << endl;
 				exit(-1);
 			}
 		}
