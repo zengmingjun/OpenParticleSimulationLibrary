@@ -91,11 +91,27 @@ namespace sp {
 	typedef void(*COORUPFUC)(Point& self);
 	typedef void(*SETCOORFUC)(Point& self);
 
+
+	class SilZCor
+	{
+	public:
+		unsigned Cor[3];
+		SilZCor();
+	};
+
+
+	class SilYCor
+	{
+	public:
+		unsigned Cor[2];
+		SilYCor();
+	};
+
+
 	class SilY
 	{
 	public:
 		unsigned NumZ;
-
 	};
 
 	class SilX
@@ -116,6 +132,15 @@ namespace sp {
 		~Sil();
 	};
 
+	class RangePass
+	{
+	public:
+		Sil* FixedCor;
+		vector<SilYCor>RemCor;
+		RangePass();
+		~RangePass();
+	};
+
 	
 
 	/*extern unsigned Dimension;
@@ -130,6 +155,7 @@ namespace sp {
 	void AddInPart();
 	void setFUpFuc(FUPFUC fuc);
 	void setCoorUpFuc(COORUPFUC fuc);
+	
 	void SpaceDataUpUesPotGrp();
 	void SpaceDataUpUesPartGrp();
 
